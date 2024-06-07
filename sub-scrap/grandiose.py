@@ -1,8 +1,6 @@
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
-from selenium import webdriver
-import undetected_chromedriver as uc
 
 
 productData = []
@@ -12,8 +10,7 @@ baseurl = "https://grandiosegroupltd.com/"
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
 headers = {'User-Agent': user_agent}
 
-for x in range(2, 6):
-    # user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
+for x in range(5, 6):
     url = f'https://grandiosegroupltd.com/shop/page/{x}/'
     response = requests.get(url, headers=headers)
     # driver.get('https://grandiosegroupltd.com/shop/page/{}/'.format(x))
@@ -21,7 +18,6 @@ for x in range(2, 6):
 
     #Parsing Selenium page to requests for extraction
     if response.status_code == 200:
-        print('Correct')
         soup = BeautifulSoup(response.content, 'html.parser')
         productList = soup.find_all("li",{"class":"type-product"})
 
@@ -33,10 +29,10 @@ for x in range(2, 6):
 
 for link in productLinks:
     """Getting Product links to extract product single page data"""
-    singleProductPage = requests.get(link, headers=headers)
+    singleProductPage = requests.get(link, timeout=100, headers=headers)
     if singleProductPage.status_code == 200:
         soup = BeautifulSoup(singleProductPage.content, 'html.parser')
-        print('Correct 2')
+        print(f'Scraping {link}')
         """Extracting Product Information from Single product Pages"""
 
         try:
@@ -51,10 +47,14 @@ for link in productLinks:
 
         try:
             extract_des = soup.find("div",{"class":"woocommerce-Tabs-panel--description"})
-            [h2.decompose() for h2 in extract_des('h2')]
-            description = extract_des
+            [h2.decompose() for h2 in [extract_des.find("h2")] if h2]
+            children = extract_des.find_all(recursive=False)
+            description = ''.join(str(child) for child in children)
         except:
-            description = ""
+            if name:
+                description = name
+            else:
+                description = ""
 
         try:
             categories = [i.text for i in soup.select("span.posted_in a")]
@@ -84,4 +84,4 @@ for link in productLinks:
 
 
 df = pd.DataFrame(productData)
-df.to_csv('Grandiose 2.csv', index=False)
+df.to_csv('Grandiose 5.csv', index=False)
