@@ -11,7 +11,8 @@ user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 headers = {'User-Agent': user_agent}
 
 for x in range(1, 2):
-    url = f'https://classiccars.com/listings/find/1964-1972/chevrolet/chevelle?ps=2&p={x}/'
+    url = f'https://classiccars.com/listings/find/1964-1972/chevrolet/chevelle?ps=60&p={x}/'
+    # url = f'https://classiccars.com/listings/find/all-years/subaru?ps=60&p={x}/'
     response = requests.get(url, headers=headers)
     # driver.get('https://classiccars.com/listings/find/1964-1972/chevrolet/chevelle?ps={}/'.format(x))
 
@@ -23,8 +24,10 @@ for x in range(1, 2):
 
         for product in productList:
             link = product.find("a").get('href')
-            full_link = baseurl + link
-            productLinks.append(full_link)
+            image = product.find("img")
+            if image and 'default-thumb' not in image.get('src', ''):
+                full_link = baseurl + link
+                productLinks.append(full_link)
         print('Product Links: ', len(productLinks))
 
 
@@ -54,11 +57,19 @@ for link in productLinks:
 
         try:
             extract_des = soup.select_one(".pm-details-list")
-            description = extract_des
+            address = extract_des.select_one(".p-address")
+            last_c = extract_des.select_one("li:not(.border-btm)")
+            if address:
+                address.decompose()
+            if last_c:
+                last_c.decompose()
+            description = str(extract_des)
         except:
             description = ""
 
-        category = "1964 to 1972 Chevrolet"  # Fixed text as provided
+        # category = "1964 to 1972 Chevrolet"
+        category = "Subaru/Wrx/Stil"
+        # category = "Mini Cooper"
 
         try:
             gallery = soup.select('.gallery-top .swiper-slide[data-jumbo]')
@@ -82,4 +93,4 @@ for link in productLinks:
         print(f"Failed to retrieve product page {link}")
 
 df = pd.DataFrame(productData)
-df.to_csv('classic_cars.csv', index=False)
+df.to_csv('subaru classic_cars 2.csv', index=False)
