@@ -5,7 +5,7 @@ import undetected_chromedriver as uc
 
 
 options = uc.ChromeOptions()
-# options.add_argument('--headless') 
+options.add_argument('--headless') 
 driver = uc.Chrome(options=options)
 
 productData = []
@@ -15,10 +15,10 @@ baseurl = "https://classiccars.com"
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
 driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":user_agent})
 
-for x in range(2, 3):
-    # url = f'https://classiccars.com/listings/find/all-years/subaru?p={x}&ps=10/'
-    driver.get('https://classiccars.com/listings/find/all-years/subaru?ps=10&p={}/'.format(x))
-    # driver.get(url)
+for x in range(3, 4):
+    # url = 'https://classiccars.com/listings/find/all-years/subaru?ps=10&p={}'.format(x)
+    url = 'https://classiccars.com/listings/find/all-years/mini?ps=10&p={}'.format(x)
+    driver.get(url)
 
     # Parsing the page using BeautifulSoup
     soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -67,16 +67,18 @@ for link in productLinks:
     except:
         description = ""
 
-    category = "1964 to 1972 Chevrolet"
+    # category = "1964 to 1972 Chevrolet"
     # category = "Subaru/Wrx/Stil"
-    # category = "Mini Cooper"
+    category = "Mini Cooper"
 
     try:
         gallery = soup.select('.gallery-top .swiper-slide[data-jumbo]')
         images = [image['data-jumbo'] for image in gallery if 'youtube' not in image['data-jumbo']]
+        images = images[:10]
         images = ','.join(images)
-    except:
+    except Exception as e:
         images = ""
+        print(f"An error occurred: {e}")
 
     product = {
         "Name": name,
@@ -92,4 +94,4 @@ for link in productLinks:
 driver.quit()
 
 df = pd.DataFrame(productData)
-df.to_csv('sub_classic_cars_2.csv', index=False)
+df.to_csv('Minicc 2.csv', index=False)
