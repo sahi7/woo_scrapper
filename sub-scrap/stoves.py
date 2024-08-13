@@ -9,13 +9,13 @@ user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 
 # Initialize undetected Chrome driver
 options = uc.ChromeOptions()
-options.add_argument('--headless') 
+# options.add_argument('--headless') 
 driver = uc.Chrome(options=options)
 driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":user_agent})
 
 # Get product links
-for x in range(1, 3):
-    url = f'https://sprattfireplaces.ie/product-category/stoves/pelletstoves/wood-pellet-air-stoves/?tab=products&page={x}/'
+for x in range(2, 3):
+    url = f'https://sprattfireplaces.ie/product-category/stoves/pelletstoves/wood-pellet-air-stoves/?tab=products&page=2'
     driver.get(url)
 
     # Parse the page source with BeautifulSoup
@@ -89,6 +89,7 @@ for link in productLinks:
 
     try:
         tags = [i.text for i in soup.select("span.tagged_as a")]
+        tags = ", ".join(tags)
     except:
         tags = ""
 
