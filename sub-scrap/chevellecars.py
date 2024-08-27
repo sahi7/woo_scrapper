@@ -15,9 +15,9 @@ baseurl = "https://classiccars.com"
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
 driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":user_agent})
 
-for x in range(3, 4):
+for x in range(1, 2):
     # url = 'https://classiccars.com/listings/find/all-years/subaru?ps=10&p={}'.format(x)
-    url = 'https://classiccars.com/listings/find/all-years/mini?ps=10&p={}'.format(x)
+    url = 'https://classiccars.com/listings/find/2010-2024/honda/civic?ps=10&p={}'.format(x)
     driver.get(url)
 
     # Parsing the page using BeautifulSoup
@@ -67,9 +67,9 @@ for link in productLinks:
     except:
         description = ""
 
-    # category = "1964 to 1972 Chevrolet"
+    # category = "Mercedes-Benz"
     # category = "Subaru/Wrx/Stil"
-    category = "Mini Cooper"
+    category = "Honda|Honda > Civic"
 
     try:
         gallery = soup.select('.gallery-top .swiper-slide[data-jumbo]')
@@ -94,4 +94,4 @@ for link in productLinks:
 driver.quit()
 
 df = pd.DataFrame(productData)
-df.to_csv('Minicc 2.csv', index=False)
+df.to_csv('Honda-civic.csv', index=False)
