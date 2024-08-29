@@ -17,7 +17,7 @@ options.add_argument('--headless')
 driver = uc.Chrome(options=options)
 driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":user_agent})
 
-for x in range(1,2):
+for x in range(2,5):
     driver.get(shopURL.format(x))
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     productList = soup.find_all("li",{"class":"type-product"})
@@ -51,6 +51,11 @@ for link in productLinks:
         description = ""
 
     try:
+        short_description = soup.find("div",{"class":"woocommerce-product-details__short-description"})
+    except:
+        short_description = ""
+
+    try:
         categories = [i.text for i in soup.select("span.posted_in a")]
         categories = ','.join(categories).capitalize()
     except:
@@ -63,9 +68,9 @@ for link in productLinks:
     except:
         images = ""
 
-    product = {"SKU":sku, "Name":name, "Description":description, "Categories":categories, "Images":images }
+    product = {"SKU":sku, "Name":name, "Description":description, "Short Description":short_description, "Categories":categories, "Images":images }
 
     productData.append(product)
 
 df = pd.DataFrame(productData)
-df.to_csv('bills.csv', index=False)
+df.to_csv('bills1.csv', index=False)
