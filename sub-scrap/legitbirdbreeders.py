@@ -6,18 +6,21 @@ import undetected_chromedriver as uc
 productData = []
 productLinks = []
 
-baseurl = "https://www.fiatpapers.com/"
+# baseurl = "https://www.legitbirdbreeders.com/" 
+baseurl = "gamefowlsforsale.com"
+# sugar-feather.com
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
-headers = {'User-Agent': user_agent}
-shopURL = 'https://fiatpapers.com/shop/page/{}/'
+# headers = {'User-Agent': user_agent}
+# shopURL = 'https://legitbirdbreeders.com/shop/page/{}/'
+shopURL = 'gamefowlsforsale.com/shop/page/{}/'
 
 # Initialize undetected Chrome driver
 options = uc.ChromeOptions()
-options.add_argument('--headless') 
+# options.add_argument('--headless') 
 driver = uc.Chrome(options=options)
 driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":user_agent})
 
-for x in range(3,5):
+for x in range(1,2):
     driver.get(shopURL.format(x))
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     productList = soup.find_all("li",{"class":"type-product"})
@@ -58,6 +61,7 @@ for link in productLinks:
     try:
         categories = [i.text for i in soup.select("span.posted_in a")]
         categories = ','.join(categories).capitalize()
+        full_categories = f"Gamefowls > {categories}"
     except:
         categories = ""
 
@@ -68,9 +72,9 @@ for link in productLinks:
     except:
         images = ""
 
-    product = {"SKU":sku, "Name":name, "Description":description, "Short Description":short_description, "Categories":categories, "Images":images }
+    product = {"SKU":sku, "Name":name, "Description":description, "Short Description":short_description, "Categories":full_categories, "Images":images }
 
     productData.append(product)
 
 df = pd.DataFrame(productData)
-df.to_csv('bills.csv', index=False)
+df.to_csv('gamef.csv', index=False)
