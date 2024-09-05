@@ -69,8 +69,9 @@ for link in productLinks:
         images = ""
 
     product = {"SKU":sku, "Name":name, "Description":description, "Short Description":short_description, "Categories":categories, "Images":images }
+    product = {"SKU":sku, "Name":name, "Description":description, "Short Description":short_description, "Categories":categories, "Images":images }
 
     productData.append(product)
 
 df = pd.DataFrame(productData)
-df.to_csv('bills.csv', index=False)
+df.to_csv('bills1.csv', index=False)
