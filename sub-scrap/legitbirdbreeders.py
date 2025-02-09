@@ -12,16 +12,18 @@ baseurl = "gamefowlsforsale.com"
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
 # headers = {'User-Agent': user_agent}
 # shopURL = 'https://legitbirdbreeders.com/shop/page/{}/'
-shopURL = 'gamefowlsforsale.com/shop/page/{}/'
+# shopURL = 'gamefowlsforsale.com/shop/page/{}/'
 
 # Initialize undetected Chrome driver
 options = uc.ChromeOptions()
-# options.add_argument('--headless') 
+options.add_argument('--headless') 
 driver = uc.Chrome(options=options)
 driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":user_agent})
+print('Starting')
 
-for x in range(1,2):
-    driver.get(shopURL.format(x))
+for x in range(2,7):
+    url = 'https://gamefowlsforsale.com/shop/page/{}/'.format(x)
+    driver.get(url)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     productList = soup.find_all("li",{"class":"type-product"})
     #productlist = soup.find_all("div",{"class":"product-item-container"})
@@ -54,7 +56,7 @@ for link in productLinks:
         description = ""
 
     try:
-        short_description = soup.find("div", {"class": "product-short-description"})
+        short_description = soup.find("div", {"class": "woocommerce-product-details__short-description"})
     except:
         short_description = ""
 
@@ -77,4 +79,4 @@ for link in productLinks:
     productData.append(product)
 
 df = pd.DataFrame(productData)
-df.to_csv('gamef.csv', index=False)
+df.to_csv('gamef0.csv', index=False)
