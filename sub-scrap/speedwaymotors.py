@@ -62,7 +62,7 @@ for x in range(2, 3):
         product_info["Price"] = price
         # print("Price: ", price)
 
-        span_tag = product.find('span', class_='HorizontalProductCard_specs__2_at_')
+        span_tag = soup.find('span', class_=lambda x: x and 'HorizontalProductCard_specs_' in x)
         if span_tag:
             for br_tag in span_tag.find_all('br'):
                 br_tag.decompose()
@@ -77,9 +77,11 @@ for x in range(2, 3):
                     tag.name = 'div'
                     tag['class'] = 'strong'
 
-        shortD = span_tag.decode_contents()
-        product_info["Short Description"] = shortD
-        print("shortD: ", shortD)
+            shortD = span_tag.decode_contents()
+            product_info["Short Description"] = shortD
+            print("shortD: ", shortD)
+        else:
+            print("No <span> tag found with the specified class.")
 
         link = product.find("a").get('href')
         full_link = baseurl + link
