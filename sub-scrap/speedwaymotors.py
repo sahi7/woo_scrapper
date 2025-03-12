@@ -62,7 +62,7 @@ for x in range(2, 3):
         product_info["Price"] = price
         # print("Price: ", price)
 
-        span_tag = soup.find('span', class_=lambda x: x and 'HorizontalProductCard_specs_' in x)
+        span_tag = product.find('span', class_=lambda x: x and 'HorizontalProductCard_specs_' in x)
         if span_tag:
             for br_tag in span_tag.find_all('br'):
                 br_tag.decompose()
