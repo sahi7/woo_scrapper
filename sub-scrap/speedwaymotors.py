@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 productData = []
-productLinks = ['https://www.speedwaymotors.com/Speedway-Motors-Custom-Aluminum-410-Chevy-Sprint-Car-Engine,446756.html','https://www.speedwaymotors.com/Edelbrock-46760-EForce-Supercharged-LS-Performance-Crate-Engine-Chevy,110159.html']
+productLinks = []
 
 baseurl = "https://speedwaymotors.com"
 ua = UserAgent(browsers=['edge', 'chrome'])
@@ -22,86 +22,80 @@ def switch_ua(user_agent):
     driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":user_agent})
     return driver
 
-# driver = switch_ua(user_agent)
-# for x in range(1, 2):
-#     url = baseurl + '/shop/crate-engines~14-10-344-15341?page={}&sorttype=pricehighlow'.format(x)
-#     print("Spider warming up .. .. .")
-#     driver.get(url)
+driver = switch_ua(user_agent)
+for x in range(1, 2):
+    url = baseurl + '/shop/crate-engines~14-10-344-15341?page={}&sorttype=pricehighlow'.format(x)
+    print("Spider warming up .. .. .")
+    driver.get(url)
 
-#     # Parsing the page using BeautifulSoup
-#     soup = BeautifulSoup(driver.page_source, 'html.parser')
-#     productList = soup.find_all("article", {"class": "productCard"})
+    # Parsing the page using BeautifulSoup
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    productList = soup.find_all("article", {"class": "productCard"})
 
-#     for product in productList:
-#         # elements = soup.select_one('[class^="BrandSkuWrapper_brandWrapper"]')
+    for product in productList:
+        elements = soup.select_one('[class^="BrandSkuWrapper_brandWrapper"]')
 
-#         # # Initialize a dictionary to store product data
-#         # product_info = {}
+        # Initialize a dictionary to store product data
+        product_info = {}
 
-#         # if elements:
-#         #     # Get category 
-#         #     p_tag = elements.find('p', class_='p-subtle')
-#         #     category = p_tag.get_text(strip=True).replace('|', '').strip()
-#         #     product_info["Category"] = category
-#         #     print("category: ", category)
+        if elements:
+            # Get category 
+            p_tag = elements.find('p', class_='p-subtle')
+            category = p_tag.get_text(strip=True).replace('|', '').strip()
+            product_info["Category"] = category
+            # print("category: ", category)
 
-#         #     # Get sku 
-#         #     p_tag = elements.find('p', class_='p-color-subtle')
-#         #     sku = p_tag.get_text(strip=True).replace('#', '')
-#         #     product_info["SKU"] = sku
-#         #     print("sku: ", sku)
+            # Get sku 
+            p_tag = elements.find('p', class_='p-color-subtle')
+            sku = p_tag.get_text(strip=True).replace('#', '')
+            product_info["SKU"] = sku
+            # print("sku: ", sku)
 
-#         # # Get Price 
-#         # p_tag = soup.find('p', attrs={'data-testid': lambda x: x and 'regular_price' in x})
-#         # price = p_tag.get_text(strip=True).replace('$', '').replace(',', '')
-#         # product_info["Price"] = price
-#         # print("Price: ", price)
+        # Get Price 
+        p_tag = soup.find('p', attrs={'data-testid': lambda x: x and 'regular_price' in x})
+        price = p_tag.get_text(strip=True).replace('$', '').replace(',', '')
+        product_info["Price"] = price
+        # print("Price: ", price)
 
-#         # s_tag = soup.select('span.HorizontalProductCard_specs__2_at_ > *')
-#         # for index, tag in enumerate(s_tag, start=1):
-#         #     tag.attrs = {}
-#         #     if tag.name == 'p' and index % 2 == 0:
-#         #         tag.name = 'b'
+        s_tag = soup.select('span.HorizontalProductCard_specs__2_at_ > *')
+        for index, tag in enumerate(s_tag, start=1):
+            tag.attrs = {}
+            if tag.name == 'p' and index % 2 == 0:
+                tag.name = 'b'
 
-#         # shortD = soup.select_one('span.HorizontalProductCard_specs__2_at_').prettify()
-#         # product_info["Short Description"] = shortD
-#         # print("shortD: ", shortD)
+        shortD = soup.select_one('span.HorizontalProductCard_specs__2_at_').prettify()
+        product_info["Short Description"] = shortD
+        # print("shortD: ", shortD)
 
-#         link = product.find("a").get('href')
-#         full_link = baseurl + link
-#         productLinks.append(full_link)
+        link = product.find("a").get('href')
+        full_link = baseurl + link
+        productLinks.append(full_link)
 
-#         # Append product info to productData
-#         # productData.append(product_info)
+        # Append product info to productData
+        productData.append(product_info)
 
-#     print('Product Links: ', len(productLinks))
-# driver.quit()
+    print('Product Links: ', len(productLinks))
+driver.quit()
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+
 from urllib.parse import urlparse, parse_qs, unquote
+import random
 
 driver = switch_ua(user_agent)
-for i, link in enumerate(productLinks):
+for i, link in enumerate(productLinks[:2]):
     """Getting Product links to extract product single page data"""
     driver.get(link)
-    # time.sleep(5)
-    wait = WebDriverWait(driver, 10)  # Timeout after 10 seconds
-    element = wait.until(EC.presence_of_element_located((By.ID, "pdp_gallery")))
-    print("Page loaded successfully!")
+    time.sleep(random.uniform(5, 10)) 
 
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     print(f'Scraping {link}')
 
     try:
         name = soup.find("h1").text.strip()
-        print("Product Name: ", name)
-        # productData[i]["Name"] = name
+        # print("Product Name: ", name)
+        productData[i]["Name"] = name
     except:
         name = ""
-
-    # print("Updated Product Data: ", productData[i])
 
     try:
         cleaned_description = ""
@@ -118,16 +112,17 @@ for i, link in enumerate(productLinks):
                 link.replace_with(link.get_text())
             
             cleaned_description = description_container.prettify()
-            print("cleaned_description: ", cleaned_description)
+            # print("cleaned_description: ", cleaned_description)
         if table:
             first_thead, first_tbody = table.find('thead'), table.find('tbody')
             # Create and populate new table
             new_table = soup.new_tag('table')
             [first_thead and new_table.append(first_thead), first_tbody and new_table.append(first_tbody)]
             tech_desc = new_table.prettify()
-            print("tech_desc: ", tech_desc)
+            # print("tech_desc: ", tech_desc)
 
         description = f"{cleaned_description}\n\n{tech_desc}"
+        productData[i]["Description"] = description
 
     except:
         description = ""
@@ -166,10 +161,12 @@ for i, link in enumerate(productLinks):
         # Join the list of clean image URLs into a comma-separated string
         images = ', '.join(clean_image_urls)
         # print("Images: ", images)
-        # productData[i]["Images"] = images
+        productData[i]["Images"] = images
     except Exception as e:
         images = ""
         print(f"An error occurred: {e}")
+
+    # print("Updated Product Data: ", productData[i])
 
 driver.quit()
 
