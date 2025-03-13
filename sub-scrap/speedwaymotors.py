@@ -12,7 +12,7 @@ productData = []
 productLinks = []
 
 baseurl = "https://speedwaymotors.com"
-ua = UserAgent(browsers=['firefox'])
+ua = UserAgent(browsers=['edge'])
 user_agent = ua.random
 product_id_counter = itertools.count(start=200)
 
@@ -34,7 +34,7 @@ def generate_product_id(first_two_digits):
     return int(product_id)
 
 driver = switch_ua(user_agent)
-for x in range(2, 3):
+for x in range(7, 8):
     url = baseurl + '/shop/crate-engines~14-10-344-15341?page={}&sorttype=pricehighlow'.format(x)
     print("Spider warming up .. .. .")
     driver.get(url)
@@ -184,7 +184,12 @@ if len(productLinks) > 0:
             print(f"An error occurred: {e}")
 
         # first_two_digits = "1204" # First product page 
-        first_two_digits = "1205" # Second product page
+        # first_two_digits = "1205" # Second product page
+        # first_two_digits = "1206" # Third product page
+        # first_two_digits = "1207" # Fourth product page
+        # first_two_digits = "1208" # Fifth 
+        # first_two_digits = "1209" # 6 
+        first_two_digits = "1210" # 7
         product_id = generate_product_id(first_two_digits)
         productData[i]["SKU"] = product_id
         print("sku: ", product_id)
@@ -194,4 +199,4 @@ if len(productLinks) > 0:
     driver.quit()
 
 df = pd.DataFrame(productData)
-df.to_csv('engines-pip4.csv', index=False)
+df.to_csv('engines-pip9.csv', index=False)
