@@ -19,7 +19,7 @@ product_id_counter = itertools.count(start=200)
 # Use the Service class to specify the ChromeDriver path
 def switch_ua(user_agent):
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--headless')  
+    # chrome_options.add_argument('--headless')  
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":user_agent})
     return driver
