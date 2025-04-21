@@ -15,9 +15,10 @@ baseurl = "https://classiccars.com"
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
 driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":user_agent})
 
-for x in range(1, 2):
+for x in range(4, 5):
     # url = 'https://classiccars.com/listings/find/all-years/subaru?ps=10&p={}'.format(x)
-    url = 'https://classiccars.com/listings/find/2010-2024/honda/civic?ps=10&p={}'.format(x)
+    # url = 'https://classiccars.com/listings/find/2005-2025/toyota/4runner?ps=10&p={}&s=year'.format(x)
+    url = 'https://classiccars.com/listings/find/all-years/chevrolet/impala?p={}&ps=60&s=year'.format(x)
     driver.get(url)
 
     # Parsing the page using BeautifulSoup
@@ -69,7 +70,7 @@ for link in productLinks:
 
     # category = "Mercedes-Benz"
     # category = "Subaru/Wrx/Stil"
-    category = "Honda|Honda > Civic"
+    category = "Chevrolet|Chevrolet > Impala"
 
     try:
         gallery = soup.select('.gallery-top .swiper-slide[data-jumbo]')
@@ -82,10 +83,10 @@ for link in productLinks:
 
     product = {
         "Name": name,
-        "Price": price,
+        "Regular price": price,
         "Description": description,
         "Short Description": short_description,
-        "Category": category,
+        "Categories": category,
         "Images": images
     }
 
@@ -94,4 +95,4 @@ for link in productLinks:
 driver.quit()
 
 df = pd.DataFrame(productData)
-df.to_csv('Honda-civic.csv', index=False)
+df.to_csv('impala5.csv', index=False)
